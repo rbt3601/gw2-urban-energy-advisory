@@ -1,8 +1,11 @@
 package com.energy.advisory_service.model.request;
 
+import com.energy.advisory_service.enums.AssessmentStatus;
+
 public class AssessmentRequest {
+
     private String assessmentId;
-    private String assessmentStatus;
+    private AssessmentStatus assessmentStatus;
     private String completedAt;
 
     public AssessmentRequest() {
@@ -16,11 +19,11 @@ public class AssessmentRequest {
         this.assessmentId = assessmentId;
     }
 
-    public String getAssessmentStatus() {
+    public AssessmentStatus getAssessmentStatus() {
         return assessmentStatus;
     }
 
-    public void setAssessmentStatus(String assessmentStatus) {
+    public void setAssessmentStatus(AssessmentStatus assessmentStatus) {
         this.assessmentStatus = assessmentStatus;
     }
 

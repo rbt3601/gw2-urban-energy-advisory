@@ -10,15 +10,22 @@ import org.springframework.stereotype.Service;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 public class ReportService {
+
     private final EnergyServiceAdapter energyServiceAdapter;
     private final WeatherServiceAdapter weatherServiceAdapter;
     private final CarbonServiceAdapter carbonServiceAdapter;
 
-    public ReportService(EnergyServiceAdapter energyServiceAdapter, WeatherServiceAdapter weatherServiceAdapter, CarbonServiceAdapter carbonServiceAdapter) {
+    private final Map<String, AdvisoryReportResponse> reportStoreByAssessmentId = new ConcurrentHashMap<>();
+
+    public ReportService(EnergyServiceAdapter energyServiceAdapter,
+                         WeatherServiceAdapter weatherServiceAdapter,
+                         CarbonServiceAdapter carbonServiceAdapter) {
         this.energyServiceAdapter = energyServiceAdapter;
         this.weatherServiceAdapter = weatherServiceAdapter;
         this.carbonServiceAdapter = carbonServiceAdapter;
@@ -77,6 +84,18 @@ public class ReportService {
         dataNote.setMessage("Values are simulated using adapter services.");
         dataNotes.add(dataNote);
         response.setDataCompletenessNotes(dataNotes);
+
+        reportStoreByAssessmentId.put(request.getAssessmentId(), response);
+
+        return response;
+    }
+
+    public AdvisoryReportResponse getReportByAssessmentId(String assessmentId) {
+        AdvisoryReportResponse response = reportStoreByAssessmentId.get(assessmentId);
+
+        if (response == null) {
+            throw new RuntimeException("Report not found for assessment id: " + assessmentId);
+        }
 
         return response;
     }
