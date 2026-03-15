@@ -38,10 +38,24 @@ public class ReportServiceImpl implements ReportService {
             throw new RuntimeException("Cannot generate report for a pending assessment");
         }
 
+        if (request.getAssessmentStatus() != actualStatus) {
+            throw new RuntimeException("assessmentStatus does not match the stored assessment status");
+        }
+
+        if (assessment.getCompletedAt() == null) {
+            throw new RuntimeException("Assessment completion time is not available");
+        }
+
+        OffsetDateTime actualCompletedAt = assessment.getCompletedAt().atOffset(ZoneOffset.UTC);
+
+        if (!request.getCompletedAt().toInstant().equals(actualCompletedAt.toInstant())) {
+            throw new RuntimeException("completedAt does not match the stored assessment completion time");
+        }
+
         Report report = new Report();
         report.setReportId(UUID.randomUUID().toString());
         report.setAssessmentId(assessment.getAssessmentId());
-        report.setGeneratedAt(request.getCompletedAt().toLocalDateTime());
+        report.setGeneratedAt(java.time.LocalDateTime.now());
         report.setReportVersion("v1.0");
         report.setSummaryMetrics("Structured in API response");
         report.setRecommendations("Structured in API response");
