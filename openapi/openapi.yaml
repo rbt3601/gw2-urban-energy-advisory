@@ -86,6 +86,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+<<<<<<< HEAD
   /assessments:
     post:
       tags: [Assessment API]
@@ -104,6 +105,9 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/SubmitEnergyAssessmentResponse'
+=======
+  
+>>>>>>> 506482b (GW2 backend implementation and validation updation)
   /assessments/{assessmentId}:
     get:
       tags: [Assessment API]
@@ -164,6 +168,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+<<<<<<< HEAD
   /reports:
     post:
       tags: [Report API]
@@ -182,6 +187,9 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GenerateSustainabilityReportResponse'
+=======
+  
+>>>>>>> 506482b (GW2 backend implementation and validation updation)
   /reports/assessment/{assessmentId}:
     get:
       tags: [Report API]
