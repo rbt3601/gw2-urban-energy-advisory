@@ -7,7 +7,7 @@ import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/assessments")
+@RequestMapping("/assessments")
 public class AssessmentController {
 
     private final AssessmentService assessmentService;
