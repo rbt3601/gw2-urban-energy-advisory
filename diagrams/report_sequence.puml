@@ -1,0 +1,19 @@
+@startuml
+actor Client
+participant "Assessment Controller" as AssessmentController
+participant "Assessment Service" as AssessmentService
+participant "Report Controller" as ReportController
+participant "Report Service" as ReportService
+
+Client -> AssessmentController: POST /submitEnergyAssessment\nlocation="Leicester no_carbon"
+AssessmentController -> AssessmentService: submitAssessment(request)
+AssessmentService --> AssessmentController: 201 Created\nassessmentId=ASM-12345678, assessmentStatus=Partial,\ncompletedAt="2026-03-15T10:05:02Z"
+AssessmentController --> Client: Partial assessment response
+
+Client -> ReportController: POST /generateSustainabilityReport\n{assessmentId:"ASM-12345678", assessmentStatus:"Partial", completedAt:"2026-03-15T10:05:02Z"}
+ReportController -> ReportService: generateReport(request)
+ReportService -> AssessmentService: getStoredAssessment("ASM-12345678")
+AssessmentService --> ReportService: Stored assessment with fallback CO2 estimate
+ReportService --> ReportController: 201 Created\nreportId=RPT-87654321, reportVersion=v1.0
+ReportController --> Client: GenerateSustainabilityReportResponse\nwith summaryMetrics, recommendations, dataCompletenessNotes
+@enduml

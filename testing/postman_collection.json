@@ -1,0 +1,153 @@
+{
+  "info": {
+    "name": "GW2 Urban Energy Advisory Tests",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:8080" },
+    { "key": "assessmentId", "value": "" },
+    { "key": "assessmentStatus", "value": "" },
+    { "key": "completedAt", "value": "" },
+    { "key": "reportAssessmentId", "value": "" },
+    { "key": "reportCompletedAt", "value": "" }
+  ],
+  "item": [
+    {
+      "name": "1 - Submit Completed Assessment",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('status 201', function () { pm.response.to.have.status(201); });",
+              "const json = pm.response.json();",
+              "pm.test('assessment completed', function () { pm.expect(json.assessmentStatus).to.eql('Completed'); });",
+              "pm.collectionVariables.set('assessmentId', json.assessmentId);",
+              "pm.collectionVariables.set('assessmentStatus', json.assessmentStatus);",
+              "pm.collectionVariables.set('completedAt', json.completedAt);"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "url": "{{baseUrl}}/submitEnergyAssessment",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"requestId\": \"REQ-1001\",\n  \"createdAt\": \"2026-03-15T10:00:00Z\",\n  \"property\": {\n    \"propertyId\": \"PROP-001\",\n    \"location\": \"Leicester green cold\",\n    \"propertyType\": \"home\"\n  },\n  \"timeWindow\": {\n    \"startDateTime\": \"2026-03-01T00:00:00Z\",\n    \"endDateTime\": \"2026-03-02T00:00:00Z\",\n    \"granularity\": \"hourly\"\n  }\n}"
+        }
+      }
+    },
+    {
+      "name": "2 - Submit Partial Assessment (No Carbon)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('status 201', function () { pm.response.to.have.status(201); });",
+              "const json = pm.response.json();",
+              "pm.test('assessment partial', function () { pm.expect(json.assessmentStatus).to.eql('Partial'); });",
+              "pm.collectionVariables.set('reportAssessmentId', json.assessmentId);",
+              "pm.collectionVariables.set('reportCompletedAt', json.completedAt);"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "url": "{{baseUrl}}/submitEnergyAssessment",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"requestId\": \"REQ-1002\",\n  \"createdAt\": \"2026-03-15T10:05:00Z\",\n  \"property\": {\n    \"propertyId\": \"PROP-002\",\n    \"location\": \"Leicester no_carbon\",\n    \"propertyType\": \"home\"\n  },\n  \"timeWindow\": {\n    \"startDateTime\": \"2026-03-01T00:00:00Z\",\n    \"endDateTime\": \"2026-03-02T00:00:00Z\",\n    \"granularity\": \"hourly\"\n  }\n}"
+        }
+      }
+    },
+    {
+      "name": "3 - Submit Failed Assessment (No Energy)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('status 201', function () { pm.response.to.have.status(201); });",
+              "const json = pm.response.json();",
+              "pm.test('assessment failed', function () { pm.expect(json.assessmentStatus).to.eql('Failed'); });",
+              "pm.test('error message present', function () { pm.expect(json.errorMessage).to.be.a('string'); });"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "url": "{{baseUrl}}/submitEnergyAssessment",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"requestId\": \"REQ-1003\",\n  \"createdAt\": \"2026-03-15T10:06:00Z\",\n  \"property\": {\n    \"propertyId\": \"FAIL-ENERGY-001\",\n    \"location\": \"Leicester\",\n    \"propertyType\": \"home\"\n  },\n  \"timeWindow\": {\n    \"startDateTime\": \"2026-03-01T00:00:00Z\",\n    \"endDateTime\": \"2026-03-02T00:00:00Z\",\n    \"granularity\": \"hourly\"\n  }\n}"
+        }
+      }
+    },
+    {
+      "name": "4 - Get Stored Completed Assessment",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/assessments/{{assessmentId}}"
+      }
+    },
+    {
+      "name": "5 - Generate Report From Completed Assessment",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('status 201', function () { pm.response.to.have.status(201); });",
+              "const json = pm.response.json();",
+              "pm.test('summary metrics returned', function () { pm.expect(json.summaryMetrics.totalKWh).to.be.a('number'); });"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "url": "{{baseUrl}}/generateSustainabilityReport",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"assessmentId\": \"{{assessmentId}}\",\n  \"assessmentStatus\": \"{{assessmentStatus}}\",\n  \"completedAt\": \"{{completedAt}}\"\n}"
+        }
+      }
+    },
+    {
+      "name": "6 - Generate Report From Partial Assessment",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "url": "{{baseUrl}}/generateSustainabilityReport",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"assessmentId\": \"{{reportAssessmentId}}\",\n  \"assessmentStatus\": \"Partial\",\n  \"completedAt\": \"{{reportCompletedAt}}\"\n}"
+        }
+      }
+    },
+    {
+      "name": "7 - Invalid Request Validation",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "url": "{{baseUrl}}/submitEnergyAssessment",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"requestId\": \"REQ-9999\",\n  \"createdAt\": \"bad-date\"\n}"
+        }
+      }
+    }
+  ]
+}

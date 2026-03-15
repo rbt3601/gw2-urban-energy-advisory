@@ -1,0 +1,27 @@
+@startuml
+actor Client
+participant "Assessment Controller" as Controller
+participant "Assessment Service" as Service
+participant "Energy Adapter" as Energy
+participant "Weather Adapter" as Weather
+participant "Carbon Adapter" as Carbon
+
+Client -> Controller: POST /submitEnergyAssessment\n{requestId:"REQ-1001", createdAt:"2026-03-15T10:00:00Z",\nproperty:{propertyId:"PROP-001", location:"Leicester green cold", propertyType:"home"},\ntimeWindow:{startDateTime:"2026-03-01T00:00:00Z", endDateTime:"2026-03-02T00:00:00Z", granularity:"hourly"}}
+Controller -> Service: submitAssessment(request)
+Service -> Energy: getEnergyAnalysis(request)
+Energy --> Service: totalKWh=13.92, peakKWh=2.5, sourceName=MockSmartMeterAdapter
+Service -> Weather: getWeatherContext(request)
+Weather --> Service: summary="Cold weather increased heating demand..."
+Service -> Carbon: getCarbonIntensityContext(request, totalKWh)
+Carbon --> Service: region="Leicester green cold", estimatedKgCO2=1.67
+Service --> Controller: 201 Created\nassessmentStatus=Completed
+Controller --> Client: SubmitEnergyAssessmentResponse
+
+== Failure branch ==
+Client -> Controller: POST /submitEnergyAssessment\npropertyId="FAIL-ENERGY-001"
+Controller -> Service: submitAssessment(request)
+Service -> Energy: getEnergyAnalysis(request)
+Energy --> Service: throws critical energy unavailable
+Service --> Controller: 201 Created\nassessmentStatus=Failed, errorMessage=...
+Controller --> Client: SubmitEnergyAssessmentResponse
+@enduml
