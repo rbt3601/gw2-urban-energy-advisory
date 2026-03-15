@@ -86,7 +86,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
-
+  
   /assessments/{assessmentId}:
     get:
       tags: [Assessment API]
@@ -147,7 +147,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
-
+  
   /reports/assessment/{assessmentId}:
     get:
       tags: [Report API]
