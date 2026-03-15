@@ -1,16 +1,5 @@
 package com.energy.advisory_service.controller;
 
-<<<<<<< HEAD
-import com.energy.advisory_service.model.request.SubmitEnergyAssessmentRequest;
-import com.energy.advisory_service.model.response.SubmitEnergyAssessmentResponse;
-import com.energy.advisory_service.service.AssessmentService;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-=======
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,7 +16,6 @@ import com.energy.advisory_service.service.AssessmentService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
->>>>>>> 506482b (GW2 backend implementation and validation updation)
 
 @RestController
 @RequestMapping
@@ -40,11 +28,7 @@ public class AssessmentController {
         this.assessmentService = assessmentService;
     }
 
-<<<<<<< HEAD
-    @PostMapping({"/submitEnergyAssessment", "/assessments"})
-=======
     @PostMapping({"/submitEnergyAssessment"})
->>>>>>> 506482b (GW2 backend implementation and validation updation)
     @Operation(summary = "Submit an energy assessment request")
     public ResponseEntity<SubmitEnergyAssessmentResponse> submitAssessment(@Valid @RequestBody SubmitEnergyAssessmentRequest request) {
         SubmitEnergyAssessmentResponse response = assessmentService.submitAssessment(request);
