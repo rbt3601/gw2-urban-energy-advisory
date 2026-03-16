@@ -3,31 +3,30 @@ package com.energy.advisory_service.model.request;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 
 import java.time.OffsetDateTime;
 
 public class SubmitEnergyAssessmentRequest {
 
-    @NotBlank
+    @NotBlank(message = "requestId is required")
     private String requestId;
 
-    @NotNull
+    @NotNull(message = "createdAt is required")
     private OffsetDateTime createdAt;
 
     @Valid
-    @NotNull
+    @NotNull(message = "property is required")
     private PropertyRequest property;
 
     @Valid
-    @NotNull
+    @NotNull(message = "timeWindow is required")
     private TimeWindowRequest timeWindow;
 
-    /**
-     * Optional values:
-     * energy_fail
-     * weather_fail
-     * carbon_fail
-     */
+    @Pattern(
+            regexp = "^(energy_fail|weather_fail|carbon_fail)?$",
+            message = "testMode must be one of: energy_fail, weather_fail, carbon_fail"
+    )
     private String testMode;
 
     public String getRequestId() {

@@ -6,13 +6,13 @@ import jakarta.validation.constraints.NotNull;
 
 public class PropertyRequest {
 
-    @NotBlank
+    @NotBlank(message = "property.propertyId is required")
     private String propertyId;
 
-    @NotBlank
+    @NotBlank(message = "property.location is required")
     private String location;
 
-    @NotNull
+    @NotNull(message = "property.propertyType is required")
     private PropertyType propertyType;
 
     public String getPropertyId() {
