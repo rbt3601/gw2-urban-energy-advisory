@@ -1,7 +1,7 @@
-package com.energy.advisory_service.dto.request;
+package com.energy.advisory_service.model.request;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.energy.advisory_service.enums.Granularity;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.NotNull;
@@ -18,13 +18,6 @@ public class TimeWindowRequest {
 
     @NotNull
     private Granularity granularity;
-
-    @JsonIgnore
-    @Schema(hidden = true)
-    @AssertTrue(message = "endDateTime must be after startDateTime")
-    public boolean isValidTimeWindow() {
-        return startDateTime == null || endDateTime == null || endDateTime.isAfter(startDateTime);
-    }
 
     public OffsetDateTime getStartDateTime() {
         return startDateTime;
@@ -48,5 +41,15 @@ public class TimeWindowRequest {
 
     public void setGranularity(Granularity granularity) {
         this.granularity = granularity;
+    }
+
+    @JsonIgnore
+    @Schema(hidden = true)
+    @AssertTrue(message = "endDateTime must be after startDateTime")
+    public boolean isValidTimeWindow() {
+        if (startDateTime == null || endDateTime == null) {
+            return true;
+        }
+        return endDateTime.isAfter(startDateTime);
     }
 }

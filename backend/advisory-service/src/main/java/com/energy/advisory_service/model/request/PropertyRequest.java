@@ -1,4 +1,4 @@
-package com.energy.advisory_service.dto.request;
+package com.energy.advisory_service.model.request;
 
 import com.energy.advisory_service.enums.PropertyType;
 import jakarta.validation.constraints.NotBlank;

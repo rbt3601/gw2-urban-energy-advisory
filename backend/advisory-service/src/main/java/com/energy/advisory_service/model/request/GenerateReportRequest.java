@@ -1,4 +1,4 @@
-package com.energy.advisory_service.dto.request;
+package com.energy.advisory_service.model.request;
 
 import com.energy.advisory_service.enums.AssessmentStatus;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -15,17 +15,11 @@ public class GenerateReportRequest {
     private String assessmentId;
 
     @NotNull
+    @Schema(example = "Completed", allowableValues = {"Completed", "Partial", "Failed"})
     private AssessmentStatus assessmentStatus;
 
     @NotNull
     private OffsetDateTime completedAt;
-
-    @JsonIgnore
-    @Schema(hidden = true)
-    @AssertTrue(message = "assessmentStatus must be Completed, Partial, or Failed for report generation")
-    public boolean isValidAssessmentStatusForReport() {
-        return assessmentStatus == null || assessmentStatus != AssessmentStatus.PENDING;
-    }
 
     public String getAssessmentId() {
         return assessmentId;
@@ -49,5 +43,15 @@ public class GenerateReportRequest {
 
     public void setCompletedAt(OffsetDateTime completedAt) {
         this.completedAt = completedAt;
+    }
+
+    @JsonIgnore
+    @Schema(hidden = true)
+    @AssertTrue(message = "assessmentStatus must be Completed, Partial, or Failed for report generation")
+    public boolean isValidAssessmentStatusForReport() {
+        return assessmentStatus == null
+                || assessmentStatus == AssessmentStatus.COMPLETED
+                || assessmentStatus == AssessmentStatus.PARTIAL
+                || assessmentStatus == AssessmentStatus.FAILED;
     }
 }

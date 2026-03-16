@@ -27,6 +27,6 @@ public enum AssessmentStatus {
                 return status;
             }
         }
-        throw new IllegalArgumentException("Invalid assessmentStatus. Allowed values: Pending, Completed, Partial, Failed");
+        throw new IllegalArgumentException("Invalid assessment status: " + value);
     }
 }

@@ -25,6 +25,6 @@ public enum Granularity {
                 return granularity;
             }
         }
-        throw new IllegalArgumentException("Invalid granularity. Allowed values: hourly, daily");
+        throw new IllegalArgumentException("Invalid granularity: " + value);
     }
 }

@@ -24,10 +24,10 @@ public class Report {
     @Column(nullable = false)
     private String reportVersion;
 
-    @Column(length = 3000)
+    @Column(length = 2000)
     private String summaryMetrics;
 
-    @Column(length = 4000)
+    @Column(length = 2000)
     private String recommendations;
 
     @Column(length = 2000)
@@ -35,9 +35,6 @@ public class Report {
 
     @Column(length = 2000)
     private String dataCompletenessNotes;
-
-    public Report() {
-    }
 
     public Long getId() {
         return id;

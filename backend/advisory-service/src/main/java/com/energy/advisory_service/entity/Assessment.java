@@ -60,8 +60,11 @@ public class Assessment {
     @Column(length = 2000)
     private String carbonIntensityData;
 
-    public Assessment() {
-    }
+    @Column(length = 2000)
+    private String errorMessage;
+
+    @Column(length = 2000)
+    private String dataCompletenessNotes;
 
     public Long getId() {
         return id;
@@ -185,5 +188,21 @@ public class Assessment {
 
     public void setCarbonIntensityData(String carbonIntensityData) {
         this.carbonIntensityData = carbonIntensityData;
+    }
+
+    public String getErrorMessage() {
+        return errorMessage;
+    }
+
+    public void setErrorMessage(String errorMessage) {
+        this.errorMessage = errorMessage;
+    }
+
+    public String getDataCompletenessNotes() {
+        return dataCompletenessNotes;
+    }
+
+    public void setDataCompletenessNotes(String dataCompletenessNotes) {
+        this.dataCompletenessNotes = dataCompletenessNotes;
     }
 }
