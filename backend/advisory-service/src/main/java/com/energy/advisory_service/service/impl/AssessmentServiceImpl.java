@@ -9,7 +9,9 @@ import com.energy.advisory_service.entity.Assessment;
 import com.energy.advisory_service.enums.AssessmentStatus;
 import com.energy.advisory_service.repository.AssessmentRepository;
 import com.energy.advisory_service.service.AssessmentService;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
@@ -40,14 +42,42 @@ public class AssessmentServiceImpl implements AssessmentService {
         assessment.setEndDateTime(request.getTimeWindow().getEndDateTime().toLocalDateTime());
         assessment.setGranularity(request.getTimeWindow().getGranularity());
 
-        assessment.setStartedAt(LocalDateTime.now());
-        assessment.setCompletedAt(LocalDateTime.now());
-        assessment.setAssessmentStatus(AssessmentStatus.COMPLETED);
+        assessment.setStartedAt(LocalDateTime.now(ZoneOffset.UTC));
 
-        // Temporary mock placeholders until external API/adapters are connected
-        assessment.setEnergyConsumptionData("Smart meter data fetched successfully");
-        assessment.setWeatherContextData("Weather context fetched successfully");
-        assessment.setCarbonIntensityData("Carbon intensity fetched successfully");
+        String requestId = request.getRequestId() == null ? "" : request.getRequestId().toUpperCase();
+
+        boolean failEnergy = requestId.contains("FAIL_ENERGY");
+        boolean missWeather = requestId.contains("MISS_WEATHER");
+        boolean missCarbon = requestId.contains("MISS_CARBON");
+
+        if (failEnergy) {
+            assessment.setAssessmentStatus(AssessmentStatus.FAILED);
+            assessment.setEnergyConsumptionData(null);
+            assessment.setWeatherContextData(null);
+            assessment.setCarbonIntensityData(null);
+        } else {
+            assessment.setEnergyConsumptionData("Smart meter data fetched successfully");
+
+            if (missWeather) {
+                assessment.setWeatherContextData(null);
+            } else {
+                assessment.setWeatherContextData("Weather context fetched successfully");
+            }
+
+            if (missCarbon) {
+                assessment.setCarbonIntensityData(null);
+            } else {
+                assessment.setCarbonIntensityData("Carbon intensity fetched successfully");
+            }
+
+            if (missWeather || missCarbon) {
+                assessment.setAssessmentStatus(AssessmentStatus.PARTIAL);
+            } else {
+                assessment.setAssessmentStatus(AssessmentStatus.COMPLETED);
+            }
+        }
+
+        assessment.setCompletedAt(LocalDateTime.now(ZoneOffset.UTC));
 
         Assessment saved = assessmentRepository.save(assessment);
         return mapToResponse(saved);
@@ -56,7 +86,7 @@ public class AssessmentServiceImpl implements AssessmentService {
     @Override
     public AssessmentResponse getAssessmentByAssessmentId(String assessmentId) {
         Assessment saved = assessmentRepository.findByAssessmentId(assessmentId)
-                .orElseThrow(() -> new RuntimeException("Assessment not found"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Assessment not found"));
 
         return mapToResponse(saved);
     }
@@ -68,25 +98,30 @@ public class AssessmentServiceImpl implements AssessmentService {
         response.setCompletedAt(toOffset(saved.getCompletedAt()));
         response.setAssessmentStatus(saved.getAssessmentStatus());
 
-        EnergyConsumptionDataResponse energy = new EnergyConsumptionDataResponse();
-        energy.setSourceName("SmartMeterAPI");
-        energy.setDataFrom(toOffset(saved.getStartDateTime()));
-        energy.setDataTo(toOffset(saved.getEndDateTime()));
+        if (saved.getEnergyConsumptionData() != null) {
+            EnergyConsumptionDataResponse energy = new EnergyConsumptionDataResponse();
+            energy.setSourceName("SmartMeterAPI");
+            energy.setDataFrom(toOffset(saved.getStartDateTime()));
+            energy.setDataTo(toOffset(saved.getEndDateTime()));
+            response.setEnergyConsumptionData(energy);
+        }
 
-        WeatherContextDataResponse weather = new WeatherContextDataResponse();
-        weather.setSourceName("WeatherAPI");
-        weather.setDataFrom(toOffset(saved.getStartDateTime()));
-        weather.setDataTo(toOffset(saved.getEndDateTime()));
+        if (saved.getWeatherContextData() != null) {
+            WeatherContextDataResponse weather = new WeatherContextDataResponse();
+            weather.setSourceName("WeatherAPI");
+            weather.setDataFrom(toOffset(saved.getStartDateTime()));
+            weather.setDataTo(toOffset(saved.getEndDateTime()));
+            response.setWeatherContextData(weather);
+        }
 
-        CarbonIntensityDataResponse carbon = new CarbonIntensityDataResponse();
-        carbon.setSourceName("CarbonAPI");
-        carbon.setRegion(saved.getLocation());
-        carbon.setDataFrom(toOffset(saved.getStartDateTime()));
-        carbon.setDataTo(toOffset(saved.getEndDateTime()));
-
-        response.setEnergyConsumptionData(energy);
-        response.setWeatherContextData(weather);
-        response.setCarbonIntensityData(carbon);
+        if (saved.getCarbonIntensityData() != null) {
+            CarbonIntensityDataResponse carbon = new CarbonIntensityDataResponse();
+            carbon.setSourceName("CarbonAPI");
+            carbon.setRegion(saved.getLocation());
+            carbon.setDataFrom(toOffset(saved.getStartDateTime()));
+            carbon.setDataTo(toOffset(saved.getEndDateTime()));
+            response.setCarbonIntensityData(carbon);
+        }
 
         return response;
     }
