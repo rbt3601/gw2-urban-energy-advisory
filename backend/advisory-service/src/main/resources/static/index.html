@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Urban Energy Advisory Dashboard</title>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+<header class="hero-section">
+    <div class="container py-5">
+        <div class="row align-items-center g-4">
+            <div class="col-lg-8">
+                    <span class="hero-badge">
+                        <i class="bi bi-lightning-charge-fill"></i>
+                        Urban Energy Usage & Sustainability Advisory
+                    </span>
+                <h1 class="hero-title mt-3 mb-3">Energy Assessment & Report Dashboard</h1>
+                <p class="hero-subtitle mb-0">
+                    Submit assessments, inspect results, generate advisory reports, and fetch reports by report ID.
+                </p>
+            </div>
+            <div class="col-lg-4">
+                <div class="hero-stats">
+                    <div class="hero-stat-card">
+                        <div class="hero-stat-label">Backend</div>
+                        <div class="hero-stat-value">Spring Boot</div>
+                    </div>
+                    <div class="hero-stat-card">
+                        <div class="hero-stat-label">Endpoints</div>
+                        <div class="hero-stat-value">Assessments + Reports</div>
+                    </div>
+                    <div class="hero-stat-card">
+                        <div class="hero-stat-label">Flow</div>
+                        <div class="hero-stat-value">Assessment → Report</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<main class="container my-4 my-lg-5">
+    <div class="notice-card mb-4">
+        <div class="d-flex align-items-start gap-3">
+            <i class="bi bi-info-circle-fill notice-icon"></i>
+            <div>
+                <div class="notice-title">Recommended sequence</div>
+                <div class="notice-text">
+                    Submit assessment → copy <code>assessmentId</code> → generate report → copy <code>reportId</code> → fetch report.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-lg-6">
+            <section class="app-card h-100">
+                <div class="app-card-header">
+                    <div>
+                        <h2 class="app-card-title">Submit Assessment</h2>
+                        <p class="app-card-subtitle">Create a new assessment request</p>
+                    </div>
+                    <span class="endpoint-chip">POST /assessments</span>
+                </div>
+
+                <div class="app-card-body">
+                    <form id="assessmentForm" class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Request ID</label>
+                            <input type="text" class="form-control" id="requestId" value="REQ-001" required>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Created At</label>
+                            <input type="datetime-local" class="form-control" id="createdAt" step="1" required>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Property ID</label>
+                            <input type="text" class="form-control" id="propertyId" value="PROP-101" required>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Location</label>
+                            <input type="text" class="form-control" id="location" value="Leicester" required>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Property Type</label>
+                            <select class="form-select" id="propertyType" required>
+                                <option value="Home">Home</option>
+                                <option value="Apartment">Apartment</option>
+                                <option value="Office">Office</option>
+                                <option value="School">School</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Granularity</label>
+                            <select class="form-select" id="granularity" required>
+                                <option value="Hourly">Hourly</option>
+                                <option value="Daily">Daily</option>
+                                <option value="Weekly">Weekly</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Start Date Time</label>
+                            <input type="datetime-local" class="form-control" id="startDateTime" step="1" required>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">End Date Time</label>
+                            <input type="datetime-local" class="form-control" id="endDateTime" step="1" required>
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label">Test Mode</label>
+                            <select class="form-select" id="testMode">
+                                <option value="">None</option>
+                                <option value="weather_fail">weather_fail</option>
+                                <option value="carbon_fail">carbon_fail</option>
+                                <option value="energy_fail">energy_fail</option>
+                            </select>
+                        </div>
+
+                        <div class="col-12 d-flex flex-wrap gap-2 pt-2">
+                            <button type="submit" class="btn btn-primary app-btn-primary">
+                                <i class="bi bi-send-check me-2"></i>Submit Assessment
+                            </button>
+                            <button type="button" class="btn btn-light app-btn-secondary" id="fillSampleBtn">
+                                <i class="bi bi-stars me-2"></i>Fill Sample
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </section>
+        </div>
+
+        <div class="col-lg-6">
+            <section class="app-card h-100">
+                <div class="app-card-header">
+                    <div>
+                        <h2 class="app-card-title">Get Assessment</h2>
+                        <p class="app-card-subtitle">Fetch an assessment using assessmentId</p>
+                    </div>
+                    <span class="endpoint-chip">GET /assessments/{assessmentId}</span>
+                </div>
+
+                <div class="app-card-body">
+                    <div class="row g-3">
+                        <div class="col-12">
+                            <label class="form-label">Assessment ID</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="assessmentLookupId" placeholder="asm-xxxxxxxx">
+                                <button class="btn btn-primary app-btn-primary" type="button" id="fetchAssessmentBtn">
+                                    <i class="bi bi-search me-2"></i>Fetch
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="assessmentSummary" class="summary-section mt-4"></div>
+                </div>
+            </section>
+        </div>
+
+        <div class="col-lg-6">
+            <section class="app-card h-100">
+                <div class="app-card-header">
+                    <div>
+                        <h2 class="app-card-title">Generate Report</h2>
+                        <p class="app-card-subtitle">Create a report from a completed or partial assessment</p>
+                    </div>
+                    <span class="endpoint-chip">POST /reports</span>
+                </div>
+
+                <div class="app-card-body">
+                    <form id="reportForm" class="row g-3">
+                        <div class="col-12">
+                            <label class="form-label">Assessment ID</label>
+                            <input type="text" class="form-control" id="reportAssessmentId" placeholder="asm-xxxxxxxx" required>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Assessment Status</label>
+                            <select class="form-select" id="reportAssessmentStatus" required>
+                                <option value="Completed">Completed</option>
+                                <option value="Partial">Partial</option>
+                                <option value="Failed">Failed</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Completed At</label>
+                            <input type="datetime-local" class="form-control" id="reportCompletedAt" step="1" required>
+                        </div>
+
+                        <div class="col-12">
+                            <div class="small-muted">
+                                Best practice: use the auto-filled completedAt from the fetched assessment instead of typing it manually.
+                            </div>
+                        </div>
+
+                        <div class="col-12 pt-2">
+                            <button type="submit" class="btn btn-primary app-btn-primary">
+                                <i class="bi bi-file-earmark-bar-graph me-2"></i>Generate Report
+                            </button>
+                        </div>
+                    </form>
+
+                    <div id="reportCreateSummary" class="summary-section mt-4"></div>
+                </div>
+            </section>
+        </div>
+
+        <div class="col-lg-6">
+            <section class="app-card h-100">
+                <div class="app-card-header">
+                    <div>
+                        <h2 class="app-card-title">Get Report</h2>
+                        <p class="app-card-subtitle">Fetch a report using reportId</p>
+                    </div>
+                    <span class="endpoint-chip">GET /reports/{reportId}</span>
+                </div>
+
+                <div class="app-card-body">
+                    <div class="row g-3">
+                        <div class="col-12">
+                            <label class="form-label">Report ID</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="reportLookupId" placeholder="rep-xxxxxxxx">
+                                <button class="btn btn-primary app-btn-primary" type="button" id="fetchReportBtn">
+                                    <i class="bi bi-search-heart me-2"></i>Fetch
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="reportSummary" class="summary-section mt-4"></div>
+                </div>
+            </section>
+        </div>
+
+        <div class="col-12">
+            <section class="app-card">
+                <div class="app-card-header">
+                    <div>
+                        <h2 class="app-card-title">Live API Response</h2>
+                        <p class="app-card-subtitle">Raw JSON for debugging and demonstration</p>
+                    </div>
+                    <button class="btn btn-light app-btn-secondary" type="button" id="clearOutputBtn">
+                        <i class="bi bi-trash3 me-2"></i>Clear
+                    </button>
+                </div>
+
+                <div class="app-card-body">
+                        <pre id="output" class="json-panel">{
+  "message": "Responses will appear here"
+}</pre>
+                </div>
+            </section>
+        </div>
+    </div>
+</main>
+
+<script src="/app.js"></script>
+</body>
+</html>
