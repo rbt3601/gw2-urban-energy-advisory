@@ -1,4 +1,4 @@
-package com.energy.advisory_service.dto.request;
+package com.energy.advisory_service.model.request;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
@@ -21,6 +21,14 @@ public class SubmitEnergyAssessmentRequest {
     @Valid
     @NotNull
     private TimeWindowRequest timeWindow;
+
+    /**
+     * Optional values:
+     * energy_fail
+     * weather_fail
+     * carbon_fail
+     */
+    private String testMode;
 
     public String getRequestId() {
         return requestId;
@@ -52,5 +60,13 @@ public class SubmitEnergyAssessmentRequest {
 
     public void setTimeWindow(TimeWindowRequest timeWindow) {
         this.timeWindow = timeWindow;
+    }
+
+    public String getTestMode() {
+        return testMode;
+    }
+
+    public void setTestMode(String testMode) {
+        this.testMode = testMode;
     }
 }

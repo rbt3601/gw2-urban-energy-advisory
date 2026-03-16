@@ -1,8 +1,9 @@
-package com.energy.advisory_service.dto.response;
+package com.energy.advisory_service.model.response;
 
 import com.energy.advisory_service.enums.AssessmentStatus;
 
 import java.time.OffsetDateTime;
+import java.util.List;
 
 public class AssessmentResponse {
 
@@ -14,6 +15,7 @@ public class AssessmentResponse {
     private WeatherContextDataResponse weatherContextData;
     private CarbonIntensityDataResponse carbonIntensityData;
     private String errorMessage;
+    private List<String> dataCompletenessNotes;
 
     public String getAssessmentId() {
         return assessmentId;
@@ -77,5 +79,13 @@ public class AssessmentResponse {
 
     public void setErrorMessage(String errorMessage) {
         this.errorMessage = errorMessage;
+    }
+
+    public List<String> getDataCompletenessNotes() {
+        return dataCompletenessNotes;
+    }
+
+    public void setDataCompletenessNotes(List<String> dataCompletenessNotes) {
+        this.dataCompletenessNotes = dataCompletenessNotes;
     }
 }
