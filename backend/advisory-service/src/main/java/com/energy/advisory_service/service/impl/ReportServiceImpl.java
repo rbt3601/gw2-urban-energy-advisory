@@ -1,17 +1,25 @@
 package com.energy.advisory_service.service.impl;
 
 import com.energy.advisory_service.dto.request.GenerateReportRequest;
-import com.energy.advisory_service.dto.response.*;
+import com.energy.advisory_service.dto.response.ContextNoteResponse;
+import com.energy.advisory_service.dto.response.DataCompletenessNoteResponse;
+import com.energy.advisory_service.dto.response.RecommendationResponse;
+import com.energy.advisory_service.dto.response.ReportResponse;
+import com.energy.advisory_service.dto.response.ReportSummaryMetricsResponse;
 import com.energy.advisory_service.entity.Assessment;
 import com.energy.advisory_service.entity.Report;
 import com.energy.advisory_service.enums.AssessmentStatus;
 import com.energy.advisory_service.repository.AssessmentRepository;
 import com.energy.advisory_service.repository.ReportRepository;
 import com.energy.advisory_service.service.ReportService;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.UUID;
 
@@ -30,32 +38,42 @@ public class ReportServiceImpl implements ReportService {
     @Override
     public ReportResponse generateReport(GenerateReportRequest request) {
         Assessment assessment = assessmentRepository.findByAssessmentId(request.getAssessmentId())
-                .orElseThrow(() -> new RuntimeException("Assessment not found"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Assessment not found"));
 
         AssessmentStatus actualStatus = assessment.getAssessmentStatus();
 
         if (actualStatus == AssessmentStatus.PENDING) {
-            throw new RuntimeException("Cannot generate report for a pending assessment");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "Cannot generate report for a pending assessment");
         }
 
         if (request.getAssessmentStatus() != actualStatus) {
-            throw new RuntimeException("assessmentStatus does not match the stored assessment status");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "assessmentStatus does not match the stored assessment status");
         }
 
         if (assessment.getCompletedAt() == null) {
-            throw new RuntimeException("Assessment completion time is not available");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "Assessment completion time is not available");
         }
 
-        OffsetDateTime actualCompletedAt = assessment.getCompletedAt().atOffset(ZoneOffset.UTC);
+        OffsetDateTime actualCompletedAt = assessment.getCompletedAt()
+                .atOffset(ZoneOffset.UTC)
+                .truncatedTo(ChronoUnit.SECONDS);
 
-        if (!request.getCompletedAt().toInstant().equals(actualCompletedAt.toInstant())) {
-            throw new RuntimeException("completedAt does not match the stored assessment completion time");
+        OffsetDateTime requestCompletedAt = request.getCompletedAt()
+                .withOffsetSameInstant(ZoneOffset.UTC)
+                .truncatedTo(ChronoUnit.SECONDS);
+
+        if (!requestCompletedAt.toInstant().equals(actualCompletedAt.toInstant())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "completedAt does not match the stored assessment completion time");
         }
 
         Report report = new Report();
         report.setReportId(UUID.randomUUID().toString());
         report.setAssessmentId(assessment.getAssessmentId());
-        report.setGeneratedAt(java.time.LocalDateTime.now());
+        report.setGeneratedAt(LocalDateTime.now(ZoneOffset.UTC));
         report.setReportVersion("v1.0");
         report.setSummaryMetrics("Structured in API response");
         report.setRecommendations("Structured in API response");
@@ -74,10 +92,10 @@ public class ReportServiceImpl implements ReportService {
     @Override
     public ReportResponse getReportByAssessmentId(String assessmentId) {
         Report saved = reportRepository.findByAssessmentId(assessmentId)
-                .orElseThrow(() -> new RuntimeException("Report not found"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Report not found"));
 
         Assessment assessment = assessmentRepository.findByAssessmentId(assessmentId)
-                .orElseThrow(() -> new RuntimeException("Assessment not found"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Assessment not found"));
 
         return mapToResponse(saved, assessment.getAssessmentStatus());
     }
