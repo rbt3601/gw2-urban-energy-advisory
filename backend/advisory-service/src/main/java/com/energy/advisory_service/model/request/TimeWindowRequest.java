@@ -10,13 +10,13 @@ import java.time.OffsetDateTime;
 
 public class TimeWindowRequest {
 
-    @NotNull
+    @NotNull(message = "timeWindow.startDateTime is required")
     private OffsetDateTime startDateTime;
 
-    @NotNull
+    @NotNull(message = "timeWindow.endDateTime is required")
     private OffsetDateTime endDateTime;
 
-    @NotNull
+    @NotNull(message = "timeWindow.granularity is required")
     private Granularity granularity;
 
     public OffsetDateTime getStartDateTime() {
@@ -45,7 +45,7 @@ public class TimeWindowRequest {
 
     @JsonIgnore
     @Schema(hidden = true)
-    @AssertTrue(message = "endDateTime must be after startDateTime")
+    @AssertTrue(message = "timeWindow.endDateTime must be after timeWindow.startDateTime")
     public boolean isValidTimeWindow() {
         if (startDateTime == null || endDateTime == null) {
             return true;

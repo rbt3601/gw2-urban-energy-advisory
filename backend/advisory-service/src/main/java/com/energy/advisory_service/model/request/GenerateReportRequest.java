@@ -11,14 +11,14 @@ import java.time.OffsetDateTime;
 
 public class GenerateReportRequest {
 
-    @NotBlank
+    @NotBlank(message = "assessmentId is required")
     private String assessmentId;
 
-    @NotNull
+    @NotNull(message = "assessmentStatus is required")
     @Schema(example = "Completed", allowableValues = {"Completed", "Partial", "Failed"})
     private AssessmentStatus assessmentStatus;
 
-    @NotNull
+    @NotNull(message = "completedAt is required")
     private OffsetDateTime completedAt;
 
     public String getAssessmentId() {
