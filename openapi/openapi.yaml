@@ -1,0 +1,160 @@
+openapi: 3.1.0
+info:
+  title: Energy Advisory Service API
+  version: v1.0.0
+  description: API for energy assessment submission and sustainability report generation.
+servers:
+  - url: http://localhost:8080
+    description: Local Development Server
+tags:
+  - name: Report Controller
+    description: APIs for sustainability report generation
+  - name: Assessment Controller
+    description: APIs for energy assessment submission and retrieval
+paths:
+  /reports:
+    post:
+      tags:
+        - Report Controller
+      summary: Generate sustainability report
+      operationId: generateReport
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GenerateReportRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdvisoryReportResponse'
+  /assessments:
+    post:
+      tags:
+        - Assessment Controller
+      summary: Submit energy assessment
+      operationId: submitAssessment
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SubmitEnergyAssessmentRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AssessmentResponse'
+  /reports/{reportId}:
+    get:
+      tags:
+        - Report Controller
+      summary: Get report by reportId
+      operationId: getReportByReportId
+      parameters:
+        - name: reportId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdvisoryReportResponse'
+  /assessments/{assessmentId}:
+    get:
+      tags:
+        - Assessment Controller
+      summary: Get assessment by assessmentId
+      operationId: getAssessmentByAssessmentId
+      parameters:
+        - name: assessmentId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AssessmentResponse'
+
+components:
+  schemas:
+    GenerateReportRequest:
+      type: object
+      properties:
+        assessmentId:
+          type: string
+        assessmentStatus:
+          type: string
+          enum:
+            - Completed
+            - Partial
+            - Failed
+        completedAt:
+          type: string
+          format: date-time
+      required:
+        - assessmentId
+        - assessmentStatus
+        - completedAt
+
+    AdvisoryReportResponse:
+      type: object
+      properties:
+        reportId:
+          type: string
+        generatedAt:
+          type: string
+          format: date-time
+        reportVersion:
+          type: string
+        summaryMetrics:
+          $ref: '#/components/schemas/SummaryMetrics'
+        recommendations:
+          type: array
+          items:
+            $ref: '#/components/schemas/Recommendation'
+        contextNotes:
+          type: array
+          items:
+            $ref: '#/components/schemas/ContextNote'
+        dataCompletenessNotes:
+          type: array
+          items:
+            $ref: '#/components/schemas/DataCompletenessNote'
+
+    ContextNote:
+      type: object
+      properties:
+        noteType:
+          type: string
+          enum:
+            - weather
+            - occupancy
+            - tariff
+            - other
+        message:
+          type: string
+
+    DataCompletenessNote:
+      type: object
+      properties:
+        missingSource:
+          type: string
+          enum:
+            - Energy
+            - Weather
+            - Carbon
+ 
