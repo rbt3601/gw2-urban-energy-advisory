@@ -1,0 +1,970 @@
+{
+  "info": {
+    "_postman_id": "af1773fd-7db1-4e46-ac8e-4472a33e3723",
+    "name": "Energy Advisory Service API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "53124636",
+    "_collection_link": "https://go.postman.co/collection/53124636-af1773fd-7db1-4e46-ac8e-4472a33e3723?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "TC1-Valid Assessment Request",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"requestId\": \"REQ-1001\",\n  \"createdAt\": \"2026-03-16T20:44:57.736Z\",\n  \"property\": {\n    \"propertyId\": \"PROP-014\",\n    \"location\": \"Leicester, UK\",\n    \"propertyType\": \"home\"\n  },\n  \"timeWindow\": {\n    \"startDateTime\": \"2026-03-16T20:44:57.736Z\",\n    \"endDateTime\": \"2026-03-17T20:44:57.736Z\",\n    \"granularity\": \"hourly\"\n  }\n\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8080/assessments",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "assessments"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "TC2-Missing propertyType",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"requestId\": \"REQ-1001\",\n  \"createdAt\": \"2026-03-16T20:44:57.736Z\",\n  \"property\": {\n    \"propertyId\": \"PROP-014\",\n    \"location\": \"Leicester, UK\",\n  },\n  \"timeWindow\": {\n    \"startDateTime\": \"2026-03-16T20:44:57.736Z\",\n    \"endDateTime\": \"2026-03-17T20:44:57.736Z\",\n    \"granularity\": \"hourly\"\n  }\n\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8080/assessments",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "assessments"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "TC3-Missing timeWindow object",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"requestId\": \"REQ-1001\",\n  \"createdAt\": \"2026-03-16T20:44:57.736Z\",\n  \"property\": {\n    \"propertyId\": \"PROP-014\",\n    \"location\": \"Leicester, UK\",\n    \"propertyType\": \"home\"\n  },\n//   \"timeWindow\": {\n//     \"startDateTime\": \"2026-03-16T20:44:57.736Z\",\n//     \"endDateTime\": \"2026-03-17T20:44:57.736Z\",\n//     \"granularity\": \"hourly\"\n//   },\n  \"testMode\": \"None\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8080/assessments",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "assessments"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "TC4-Invalid propertyType value",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"requestId\": \"REQ-1001\",\n  \"createdAt\": \"2026-03-16T20:44:57.736Z\",\n  \"property\": {\n    \"propertyId\": \"PROP-014\",\n    \"location\": \"Leicester, UK\",\n    \"propertyType\": \"office\"\n  },\n  \"timeWindow\": {\n    \"startDateTime\": \"2026-03-16T20:44:57.736Z\",\n    \"endDateTime\": \"2026-03-17T20:44:57.736Z\",\n    \"granularity\": \"hourly\"\n  },\n  \"testMode\": \"None\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8080/assessments",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "assessments"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "TC5-Invalid granularity value",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"requestId\": \"REQ-1001\",\n  \"createdAt\": \"2026-03-16T20:44:57.736Z\",\n  \"property\": {\n    \"propertyId\": \"PROP-014\",\n    \"location\": \"Leicester, UK\",\n    \"propertyType\": \"home\"\n  },\n  \"timeWindow\": {\n    \"startDateTime\": \"2026-03-16T20:44:57.736Z\",\n    \"endDateTime\": \"2026-03-17T20:44:57.736Z\",\n    \"granularity\": \"weekly\"\n  }\n  \n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8080/assessments",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "assessments"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "TC6-Invalid createdAt date format",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"requestId\": \"REQ-1001\",\n  \"createdAt\"T20:44:57.736Z\",\n  \"property\": {\n    \"propertyId\": \"PROP-014\",\n    \"location\": \"Leicester, UK\",\n    \"propertyType\": \"home\"\n  },\n  \"timeWindow\": {\n    \"startDateTime\": \"2026-03-16T20:44:57.736Z\",\n    \"endDateTime\": \"2026-03-17T20:44:57.736Z\",\n    \"granularity\": \"hourly\"\n  },\n  \"testMode\": \"None\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:8080/assessments",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "assessments"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "TC7-Invalid startDateTime format",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"requestId\": \"REQ-1001\",\n  \"createdAt\": \"2026-03-16T20:44:57.736Z\",\n  \"property\": {\n    \"propertyId\": \"PROP-014\",\n    \"location\": \"Leicester, UK\",\n    \"propertyType\": \"home\"\n  },\n  \"timeWindow\": {\n    \"startDateTime\": \"2026-03-16\",\n    \"endDateTime\": \"2026-03-17T20:44:57.736Z\",\n    \"granularity\": \"hourly\"\n  },\n  \"testMode\": \"None\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8080/assessments",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "assessments"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "TC8-Invalid time window (endDateTime earlier than startDateTime)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"requestId\": \"REQ-1001\",\n  \"createdAt\": \"2026-03-16T20:44:57.736Z\",\n  \"property\": {\n    \"propertyId\": \"PROP-014\",\n    \"location\": \"Leicester, UK\",\n    \"propertyType\": \"home\"\n  },\n  \"timeWindow\": {\n    \"startDateTime\": \"2026-03-16T20:44:57.736Z\",\n    \"endDateTime\": \"2026-03-14T20:44:57.736Z\",\n    \"granularity\": \"hourly\"\n  },\n  \"testMode\": \"None\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8080/assessments",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "assessments"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "TC9-Empty request body",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8080/assessments",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "assessments"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "TC10-GET request instead of POST",
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      },
+      "request": {
+        "method": "GET",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8080/assessments",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "assessments"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "TC11-Request contains additional unexpected field(FIX)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"requestId\": \"REQ-1001\",\n  \"createdAt\": \"2026-03-16T20:44:57.736Z\",\n  \"extra_field\": \"extra\",\n  \"property\": {\n    \"propertyId\": \"PROP-014\",\n    \"location\": \"Leicester, UK\",\n    \"propertyType\": \"home\"\n  },\n  \"timeWindow\": {\n    \"startDateTime\": \"2026-03-16T20:44:57.736Z\",\n    \"endDateTime\": \"2026-03-17T20:44:57.736Z\",\n    \"granularity\": \"hourly\"\n  },\n  \"testMode\": \"None\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8080/assessments",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "assessments"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "TC12-Malformed JSON request",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"requestId\": \"REQ-1001\",\n  \"createdAt\": \"2026-03-16T20:44:57.736Z\",\n  \"property\": {\n    \"propertyId\": \"PROP-014\",\n    \"location\": \"Leicester, UK\",\n    \"propertyType\": \"home\"\n  },\n  \"timeWindow\": {\n    \"startDateTime\": \"2026-03-16T20:44:57.736Z\",\n    \"endDateTime\": \"2026-03-17T20:44:57.736Z\",\n    \"granularity\": \"hourly\"\n  },\n  \"testMode\": \"None\"",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8080/assessments",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "assessments"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "TC13-Very large value for location field",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"requestId\": \"REQ-1001\",\n  \"createdAt\": \"2026-03-16T20:44:57.736Z\",\n  \"property\": {\n    \"propertyId\": \"PROP-014\",\n    \"location\": \"Leicesterleicesterleicesterleicester, UK\",\n    \"propertyType\": \"home\"\n  },\n  \"timeWindow\": {\n    \"startDateTime\": \"2026-03-16T20:44:57.736Z\",\n    \"endDateTime\": \"2026-03-17T20:44:57.736Z\",\n    \"granularity\": \"hourly\"\n  },\n  \"testMode\": \"None\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8080/assessments",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "assessments"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "TC14-Invalid data type for granularity",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"requestId\": \"REQ-1001\",\n  \"createdAt\": \"2026-03-16T20:44:57.736Z\",\n  \"property\": {\n    \"propertyId\": \"PROP-014\",\n    \"location\": \"Leicester, UK\",\n    \"propertyType\": \"home\"\n  },\n  \"timeWindow\": {\n    \"startDateTime\": \"2026-03-16T20:44:57.736Z\",\n    \"endDateTime\": \"2026-03-17T20:44:57.736Z\",\n    \"granularity\": 1234\n  }\n\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8080/assessments",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "assessments"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "TC15-Generate sustainability report (valid request)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"assessmentId\": \"asm-5f2fefed\",\n  \"assessmentStatus\": \"Completed\",\n  \"completedAt\": \"2026-03-16T21:04:16.859294Z\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8080/reports",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "reports"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "TC16-Missing assessmentId",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \n  \"assessmentStatus\": \"Completed\",\n  \"completedAt\": \"2026-03-16T21:04:16.859294Z\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8080/reports",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "reports"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "TC17-Missing completedAt field",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"assessmentId\": \"asm-ba1e59cd\",\n  \"assessmentStatus\": \"Completed\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:8080/reports",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "reports"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "TC18-Invalid assessmentStatus value",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"assessmentId\": \"asm-5f2fefed\",\n  \"assessmentStatus\": \"Finished\",\n  \"completedAt\": \"2026-03-16T21:04:16.859294Z\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:8080/reports",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "reports"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "TC19-Invalid completedAt date format",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"assessmentId\": \"asm-5f2fefed\",\n  \"assessmentStatus\": \"Completed\",\n  \"completedAt\": \"2026-03-33T21:04:16.859294Z\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:8080/reports",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "reports"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "TC20-Empty request body",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{}"
+        },
+        "url": {
+          "raw": "http://localhost:8080/reports",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "reports"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "TC21 Statuspartial(carbon_fail)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"requestId\": \"REQ-1001\",\n  \"createdAt\": \"2026-03-16T20:44:57.736Z\",\n  \"property\": {\n    \"propertyId\": \"PROP-014\",\n    \"location\": \"Leicester, UK\",\n    \"propertyType\": \"home\"\n  },\n  \"timeWindow\": {\n    \"startDateTime\": \"2026-03-16T20:44:57.736Z\",\n    \"endDateTime\": \"2026-03-17T20:44:57.736Z\",\n    \"granularity\": \"hourly\"\n  },\n  \"testMode\": \"None\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8080/assessments",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "assessments"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "TC22-Statuspartial(weather_fail)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"requestId\": \"REQ-1001\",\n  \"createdAt\": \"2026-03-16T20:44:57.736Z\",\n  \"property\": {\n    \"propertyId\": \"PROP-014\",\n    \"location\": \"Leicester, UK\",\n    \"propertyType\": \"home\"\n  },\n  \"timeWindow\": {\n    \"startDateTime\": \"2026-03-16T20:44:57.736Z\",\n    \"endDateTime\": \"2026-03-17T20:44:57.736Z\",\n    \"granularity\": \"hourly\"\n  },\n  \"testMode\": \"Weather_fail\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:8080/assessments",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "assessments"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "TC23-Statusfail(energy_fail)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"requestId\": \"REQ-1001\",\n  \"createdAt\": \"2026-03-16T20:44:57.736Z\",\n  \"property\": {\n    \"propertyId\": \"PROP-014\",\n    \"location\": \"Leicester, UK\",\n    \"propertyType\": \"home\"\n  },\n  \"timeWindow\": {\n    \"startDateTime\": \"2026-03-16T20:44:57.736Z\",\n    \"endDateTime\": \"2026-03-17T20:44:57.736Z\",\n    \"granularity\": \"hourly\"\n  },\n  \"testMode\": \"Energy_fail\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:8080/assessments",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "assessments"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "TC24-Reportpartial(carbon_fail)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"assessmentId\": \"asm-7f1676ac\",\n  \"assessmentStatus\": \"Partial\",\n  \"completedAt\": \"2026-03-16T21:11:04.147803Z\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8080/reports",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "reports"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "TC25-Reportpartial(weather_fail)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"assessmentId\": \"asm-1692b4ad\",\n  \"assessmentStatus\": \"Partial\",\n  \"completedAt\": \"2026-03-16T21:14:25.791514Z\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:8080/reports",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "reports"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "TC26-Reportfail(energy_fail)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"assessmentId\": \"asm-66332b93\",\n  \"assessmentStatus\": \"Failed\",\n  \"completedAt\": \"2026-03-16T21:16:10.533166Z\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:8080/reports",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "reports"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "TC27-Invalidassessmentstatus(wrong id)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"assessmentId\": \"asm-7f1676ac\",\n  \"assessmentStatus\": \"Failed\",\n  \"completedAt\": \"2026-03-16T21:11:04.147803Z\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:8080/reports",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "reports"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "TC28-Get Report by ID",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/reports/rep-298fe90e",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "reports",
+            "rep-298fe90e"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "TC29-Get Assessment by ID",
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      },
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"assessmentId\": \"asm-7f1676ac\",\n  \"assessmentStatus\": \"Failed\",\n  \"completedAt\": \"2026-03-16T21:11:04.147803Z\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:8080/assessments/asm-5f2fefed",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "assessments",
+            "asm-5f2fefed"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "TC30-Get Reportby_id(wrong ID)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/reports/rep-298fe909090",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "reports",
+            "rep-298fe909090"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "TC31-Get Assessmentby_id(wrong ID)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/assessments/asm-5f2f20030116",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "assessments",
+            "asm-5f2f20030116"
+          ]
+        }
+      },
+      "response": []
+    }
+  ]
+}

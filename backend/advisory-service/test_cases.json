@@ -1,0 +1,245 @@
+[
+  {
+    "test_id": "TC1",
+    "description": "Valid Assessment Request",
+    "method": "POST",
+    "endpoint": "http://localhost:8080/assessments",
+    "expected_status": 200,
+    "body": {
+      "requestId": "REQ101",
+      "createdAt": "2026-02-11T10:15:00Z",
+      "property": {
+        "propertyId": "P1001",
+        "location": "Leicester",
+        "propertyType": "home"
+      },
+      "timeWindow": {
+        "startDateTime": "2026-01-01T00:00:00Z",
+        "endDateTime": "2026-01-31T23:59:59Z",
+        "granularity": "daily"
+      }
+    }
+  },
+  {
+    "test_id": "TC2",
+    "description": "Missing Property Type",
+    "method": "POST",
+    "endpoint": "http://localhost:8080/assessments",
+    "expected_status": 400,
+    "body": {
+      "requestId": "REQ102",
+      "createdAt": "2026-02-11T10:15:00Z",
+      "property": {
+        "propertyId": "P1002",
+        "location": "Leicester"
+      },
+      "timeWindow": {
+        "startDateTime": "2026-01-01T00:00:00Z",
+        "endDateTime": "2026-01-31T23:59:59Z",
+        "granularity": "daily"
+      }
+    }
+  },
+  {
+    "test_id": "TC3",
+    "description": "Missing Time Window",
+    "method": "POST",
+    "endpoint": "http://localhost:8080/assessments",
+    "expected_status": 400,
+    "body": {
+      "requestId": "REQ103",
+      "createdAt": "2026-02-11T10:15:00Z",
+      "property": {
+        "propertyId": "P1003",
+        "location": "Leicester",
+        "propertyType": "home"
+      }
+    }
+  },
+  {
+    "test_id": "TC4",
+    "description": "Invalid Property Type",
+    "method": "POST",
+    "endpoint": "http://localhost:8080/assessments",
+    "expected_status": 400,
+    "body": {
+      "requestId": "REQ104",
+      "createdAt": "2026-02-11T10:15:00Z",
+      "property": {
+        "propertyId": "P1004",
+        "location": "Leicester",
+        "propertyType": "office"
+      },
+      "timeWindow": {
+        "startDateTime": "2026-01-01T00:00:00Z",
+        "endDateTime": "2026-01-31T23:59:59Z",
+        "granularity": "daily"
+      }
+    }
+  },
+  {
+    "test_id": "TC5",
+    "description": "Invalid Granularity",
+    "method": "POST",
+    "endpoint": "http://localhost:8080/assessments",
+    "expected_status": 400,
+    "body": {
+      "requestId": "REQ105",
+      "createdAt": "2026-02-11T10:15:00Z",
+      "property": {
+        "propertyId": "P1005",
+        "location": "Leicester",
+        "propertyType": "home"
+      },
+      "timeWindow": {
+        "startDateTime": "2026-01-01T00:00:00Z",
+        "endDateTime": "2026-01-31T23:59:59Z",
+        "granularity": "weekly"
+      }
+    }
+  },
+  {
+    "test_id": "TC6",
+    "description": "Invalid createdAt Format",
+    "method": "POST",
+    "endpoint": "http://localhost:8080/assessments",
+    "expected_status": 400,
+    "body": {
+      "requestId": "REQ106",
+      "createdAt": "11-02-2026",
+      "property": {
+        "propertyId": "P1006",
+        "location": "Leicester",
+        "propertyType": "home"
+      },
+      "timeWindow": {
+        "startDateTime": "2026-01-01T00:00:00Z",
+        "endDateTime": "2026-01-31T23:59:59Z",
+        "granularity": "daily"
+      }
+    }
+  },
+  {
+    "test_id": "TC7",
+    "description": "Invalid Start Date Format",
+    "method": "POST",
+    "endpoint": "http://localhost:8080/assessments",
+    "expected_status": 400,
+    "body": {
+      "requestId": "REQ107",
+      "createdAt": "2026-02-11T10:15:00Z",
+      "property": {
+        "propertyId": "P1007",
+        "location": "Leicester",
+        "propertyType": "home"
+      },
+      "timeWindow": {
+        "startDateTime": "01-01-2026",
+        "endDateTime": "2026-01-31T23:59:59Z",
+        "granularity": "daily"
+      }
+    }
+  },
+  {
+    "test_id": "TC8",
+    "description": "End Date Before Start Date",
+    "method": "POST",
+    "endpoint": "http://localhost:8080/assessments",
+    "expected_status": 400,
+    "body": {
+      "requestId": "REQ108",
+      "createdAt": "2026-02-11T10:15:00Z",
+      "property": {
+        "propertyId": "P1008",
+        "location": "Leicester",
+        "propertyType": "home"
+      },
+      "timeWindow": {
+        "startDateTime": "2026-02-01T00:00:00Z",
+        "endDateTime": "2026-01-01T23:59:59Z",
+        "granularity": "daily"
+      }
+    }
+  },
+  {
+    "test_id": "TC9",
+    "description": "Empty Request Body",
+    "method": "POST",
+    "endpoint": "http://localhost:8080/assessments",
+    "expected_status": 400,
+    "body": {}
+  },
+  {
+    "test_id": "TC10",
+    "description": "Wrong HTTP Method",
+    "method": "GET",
+    "endpoint": "http://localhost:8080/assessments",
+    "expected_status": 405
+  },
+  {
+    "test_id": "TC15",
+    "description": "Valid Report Request",
+    "method": "POST",
+    "endpoint": "http://localhost:8080/reports",
+    "expected_status": 200,
+    "body": {
+      "assessmentId": "ASM123",
+      "assessmentStatus": "COMPLETED",
+      "completedAt": "2026-02-10T14:30:00Z"
+    }
+  },
+  {
+    "test_id": "TC16",
+    "description": "Missing Assessment ID",
+    "method": "POST",
+    "endpoint": "http://localhost:8080/reports",
+    "expected_status": 400,
+    "body": {
+      "assessmentStatus": "COMPLETED",
+      "completedAt": "2026-02-10T14:30:00Z"
+    }
+  },
+  {
+    "test_id": "TC17",
+    "description": "Missing completedAt",
+    "method": "POST",
+    "endpoint": "http://localhost:8080/reports",
+    "expected_status": 400,
+    "body": {
+      "assessmentId": "ASM123",
+      "assessmentStatus": "COMPLETED"
+    }
+  },
+  {
+    "test_id": "TC18",
+    "description": "Invalid assessmentStatus",
+    "method": "POST",
+    "endpoint": "http://localhost:8080/reports",
+    "expected_status": 400,
+    "body": {
+      "assessmentId": "ASM123",
+      "assessmentStatus": "FINISHED",
+      "completedAt": "2026-02-10T14:30:00Z"
+    }
+  },
+  {
+    "test_id": "TC19",
+    "description": "Invalid completedAt Format",
+    "method": "POST",
+    "endpoint": "http://localhost:8080/reports",
+    "expected_status": 400,
+    "body": {
+      "assessmentId": "ASM123",
+      "assessmentStatus": "COMPLETED",
+      "completedAt": "10-02-2026 14:30"
+    }
+  },
+  {
+    "test_id": "TC20",
+    "description": "Empty Report Request",
+    "method": "POST",
+    "endpoint": "http://localhost:8080/reports",
+    "expected_status": 400,
+    "body": {}
+  }
+]
