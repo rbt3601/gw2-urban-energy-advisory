@@ -1,116 +1,246 @@
----
 openapi: 3.1.0
 info:
-  title: OpenAPI definition
-  version: v0
+  title: Urban Energy Usage & Sustainability Advisory Service API
+  version: 1.0.0
+  description: >
+    OpenAPI specification derived from GW1 JSON schemas.
+    Covers energy assessment submission and sustainability report generation.
+
 servers:
-- url: http://localhost:8080
-  description: Generated server url
-tags:
-- name: Report Controller
-  description: APIs for sustainability report generation
-- name: Assessment Controller
-  description: APIs for energy assessment submission and retrieval
+  - url: https://api.example.com
+
 paths:
-  "/reports":
+  /assessments:
     post:
-      tags:
-      - Report Controller
-      summary: Generate sustainability report
-      operationId: generateReport
+      tags: [Assessments]
+      summary: submitEnergyAssessment
+      operationId: submitEnergyAssessment
       requestBody:
+        required: true
         content:
           application/json:
             schema:
-              "$ref": "#/components/schemas/GenerateReportRequest"
-        required: true
+              $ref: '#/components/schemas/SubmitEnergyAssessmentRequest'
       responses:
         '201':
-          description: OK
-          content:
-            "*/*":
+          description: Energy assessment created successfully
+          headers:
+            Location:
+              description: URL of the created assessment resource
               schema:
-                "$ref": "#/components/schemas/AdvisoryReportResponse"
-  "/assessments":
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SubmitEnergyAssessmentResponse'
+        '400':
+          description: Invalid request payload
+        '500':
+          description: Internal server error
+
+  /assessments/{assessmentId}:
+    get:
+      tags: [Assessments]
+      summary: Retrieve assessment result
+      operationId: getAssessment
+      parameters:
+        - name: assessmentId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Assessment retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SubmitEnergyAssessmentResponse'
+        '404':
+          description: Assessment not found
+
+  /reports:
     post:
-      tags:
-      - Assessment Controller
-      summary: Submit energy assessment
-      operationId: submitAssessment
+      tags: [Reports]
+      summary: generateSustainabilityReport
+      operationId: generateSustainabilityReport
       requestBody:
+        required: true
         content:
           application/json:
             schema:
-              "$ref": "#/components/schemas/SubmitEnergyAssessmentRequest"
-        required: true
+              $ref: '#/components/schemas/GenerateSustainabilityReportRequest'
       responses:
         '201':
-          description: OK
-          content:
-            "*/*":
+          description: Sustainability report created successfully
+          headers:
+            Location:
+              description: URL of the created report resource
               schema:
-                "$ref": "#/components/schemas/AssessmentResponse"
-  "/reports/{reportId}":
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenerateSustainabilityReportResponse'
+        '400':
+          description: Invalid request payload
+        '500':
+          description: Internal server error
+
+  /reports/{reportId}:
     get:
-      tags:
-      - Report Controller
-      summary: Get report by reportId
-      operationId: getReportByReportId
+      tags: [Reports]
+      summary: Retrieve generated report
+      operationId: getReport
       parameters:
-      - name: reportId
-        in: path
-        required: true
-        schema:
-          type: string
+        - name: reportId
+          in: path
+          required: true
+          schema:
+            type: string
       responses:
         '200':
-          description: OK
+          description: Report retrieved successfully
           content:
-            "*/*":
+            application/json:
               schema:
-                "$ref": "#/components/schemas/AdvisoryReportResponse"
-  "/assessments/{assessmentId}":
-    get:
-      tags:
-      - Assessment Controller
-      summary: Get assessment by assessmentId
-      operationId: getAssessmentByAssessmentId
-      parameters:
-      - name: assessmentId
-        in: path
-        required: true
-        schema:
-          type: string
-      responses:
-        '200':
-          description: OK
-          content:
-            "*/*":
-              schema:
-                "$ref": "#/components/schemas/AssessmentResponse"
+                $ref: '#/components/schemas/GenerateSustainabilityReportResponse'
+        '404':
+          description: Report not found
+
 components:
   schemas:
-    GenerateReportRequest:
+
+    SubmitEnergyAssessmentRequest:
       type: object
+      additionalProperties: false
+      required: [requestId, createdAt, property, timeWindow]
+      properties:
+        requestId:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        property:
+          $ref: '#/components/schemas/Property'
+        timeWindow:
+          $ref: '#/components/schemas/TimeWindow'
+
+    Property:
+      type: object
+      additionalProperties: false
+      required: [propertyId, location, propertyType]
+      properties:
+        propertyId:
+          type: string
+        location:
+          type: string
+        propertyType:
+          type: string
+          enum: [home, smallBuilding]
+
+    TimeWindow:
+      type: object
+      additionalProperties: false
+      required: [startDateTime, endDateTime, granularity]
+      properties:
+        startDateTime:
+          type: string
+          format: date-time
+        endDateTime:
+          type: string
+          format: date-time
+        granularity:
+          type: string
+          enum: [hourly, daily]
+
+    SubmitEnergyAssessmentResponse:
+      type: object
+      additionalProperties: false
+      required: [assessmentId, startedAt, assessmentStatus]
+      properties:
+        assessmentId:
+          type: string
+        startedAt:
+          type: string
+          format: date-time
+        completedAt:
+          type: [string, 'null']
+          format: date-time
+        assessmentStatus:
+          type: string
+          enum: [Pending, Completed, Partial, Failed]
+        energyConsumptionData:
+          $ref: '#/components/schemas/EnergyConsumptionData'
+        weatherContextData:
+          $ref: '#/components/schemas/WeatherContextData'
+        carbonIntensityData:
+          $ref: '#/components/schemas/CarbonIntensityData'
+        errorMessage:
+          type: string
+
+    EnergyConsumptionData:
+      type: object
+      additionalProperties: false
+      required: [sourceName, dataFrom, dataTo]
+      properties:
+        sourceName:
+          type: string
+        dataFrom:
+          type: string
+          format: date-time
+        dataTo:
+          type: string
+          format: date-time
+
+    WeatherContextData:
+      type: object
+      additionalProperties: false
+      required: [sourceName, dataFrom, dataTo]
+      properties:
+        sourceName:
+          type: string
+        dataFrom:
+          type: string
+          format: date-time
+        dataTo:
+          type: string
+          format: date-time
+
+    CarbonIntensityData:
+      type: object
+      additionalProperties: false
+      required: [sourceName, region, dataFrom, dataTo]
+      properties:
+        sourceName:
+          type: string
+        region:
+          type: string
+        dataFrom:
+          type: string
+          format: date-time
+        dataTo:
+          type: string
+          format: date-time
+
+    GenerateSustainabilityReportRequest:
+      type: object
+      additionalProperties: false
+      required: [assessmentId, assessmentStatus, completedAt]
       properties:
         assessmentId:
           type: string
         assessmentStatus:
           type: string
-          enum:
-          - Completed
-          - Partial
-          - Failed
-          example: Completed
+          enum: [Completed, Partial, Failed]
         completedAt:
           type: string
           format: date-time
-      required:
-      - assessmentId
-      - assessmentStatus
-      - completedAt
-    AdvisoryReportResponse:
+
+    GenerateSustainabilityReportResponse:
       type: object
+      additionalProperties: false
+      required: [reportId, generatedAt, reportVersion, summaryMetrics, recommendations]
       properties:
         reportId:
           type: string
@@ -120,37 +250,43 @@ components:
         reportVersion:
           type: string
         summaryMetrics:
-          "$ref": "#/components/schemas/SummaryMetrics"
+          $ref: '#/components/schemas/ReportSummaryMetrics'
         recommendations:
           type: array
+          minItems: 1
           items:
-            "$ref": "#/components/schemas/Recommendation"
+            $ref: '#/components/schemas/Recommendation'
         contextNotes:
           type: array
           items:
-            "$ref": "#/components/schemas/ContextNote"
+            $ref: '#/components/schemas/ContextNote'
         dataCompletenessNotes:
           type: array
           items:
-            "$ref": "#/components/schemas/DataCompletenessNote"
-    ContextNote:
+            $ref: '#/components/schemas/DataCompletenessNote'
+
+    ReportSummaryMetrics:
       type: object
+      additionalProperties: false
+      required: [totalKWh, peakKWh, peakPeriodStart, peakPeriodEnd, estimatedKgCO2]
       properties:
-        noteType:
+        totalKWh:
+          type: number
+        peakKWh:
+          type: number
+        peakPeriodStart:
           type: string
-        message:
+          format: date-time
+        peakPeriodEnd:
           type: string
-    DataCompletenessNote:
-      type: object
-      properties:
-        missingSource:
-          type: string
-        severity:
-          type: string
-        message:
-          type: string
+          format: date-time
+        estimatedKgCO2:
+          type: number
+
     Recommendation:
       type: object
+      additionalProperties: false
+      required: [recommendationId, category, actionText, expectedImpact, priority]
       properties:
         recommendationId:
           type: string
@@ -162,132 +298,25 @@ components:
           type: string
         priority:
           type: string
-    SummaryMetrics:
+
+    ContextNote:
       type: object
+      additionalProperties: false
+      required: [noteType, message]
       properties:
-        totalKWh:
-          type: number
-          format: double
-        peakKWh:
-          type: number
-          format: double
-        peakPeriodStart:
+        noteType:
           type: string
-          format: date-time
-        peakPeriodEnd:
+        message:
           type: string
-          format: date-time
-        estimatedKgCO2:
-          type: number
-          format: double
-    PropertyRequest:
+
+    DataCompletenessNote:
       type: object
+      additionalProperties: false
+      required: [missingSource, severity, message]
       properties:
-        propertyId:
+        missingSource:
           type: string
-        location:
+        severity:
           type: string
-        propertyType:
-          type: string
-          enum:
-          - home
-          - smallBuilding
-      required:
-      - location
-      - propertyId
-      - propertyType
-    SubmitEnergyAssessmentRequest:
-      type: object
-      properties:
-        requestId:
-          type: string
-        createdAt:
-          type: string
-          format: date-time
-        property:
-          "$ref": "#/components/schemas/PropertyRequest"
-        timeWindow:
-          "$ref": "#/components/schemas/TimeWindowRequest"
-        testMode:
-          type: string
-          pattern: "^(energy_fail|weather_fail|carbon_fail)?$"
-      required:
-      - createdAt
-      - property
-      - requestId
-      - timeWindow
-    TimeWindowRequest:
-      type: object
-      properties:
-        startDateTime:
-          type: string
-          format: date-time
-        endDateTime:
-          type: string
-          format: date-time
-        granularity:
-          type: string
-          enum:
-          - hourly
-          - daily
-      required:
-      - endDateTime
-      - granularity
-      - startDateTime
-    AssessmentResponse:
-      type: object
-      properties:
-        assessmentId:
-          type: string
-        startedAt:
-          type: string
-          format: date-time
-        completedAt:
-          type: string
-          format: date-time
-        assessmentStatus:
-          type: string
-          enum:
-          - Pending
-          - Completed
-          - Partial
-          - Failed
-        energyConsumptionData:
-          "$ref": "#/components/schemas/EnergyConsumptionDataResponse"
-        weatherContextData:
-          "$ref": "#/components/schemas/WeatherContextDataResponse"
-        carbonIntensityData:
-          "$ref": "#/components/schemas/CarbonIntensityDataResponse"
-        errorMessage:
-          type: string
-        dataCompletenessNotes:
-          type: array
-          items:
-            type: string
-    CarbonIntensityDataResponse:
-      type: object
-      properties:
-        averageCarbonIntensity:
-          type: integer
-          format: int32
-        unit:
-          type: string
-    EnergyConsumptionDataResponse:
-      type: object
-      properties:
-        averageConsumption:
-          type: number
-          format: double
-        peakConsumption:
-          type: number
-          format: double
-        unit:
-          type: string
-    WeatherContextDataResponse:
-      type: object
-      properties:
-        averageTemperature:
-          type: number
-          format: double
-        conditionSummary:
+        message:
           type: string
