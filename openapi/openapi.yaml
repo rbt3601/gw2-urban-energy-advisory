@@ -44,7 +44,7 @@ paths:
               "$ref": "#/components/schemas/SubmitEnergyAssessmentRequest"
         required: true
       responses:
-        '200':
+        '201':
           description: OK
           content:
             "*/*":
